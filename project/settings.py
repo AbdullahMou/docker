@@ -20,12 +20,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'pq5htu76*z3*br$3t3c(a_fo=xiu^&&_f_q%dbu6ptgp^m+xqq'
+# SECRET_KEY = 'pq5htu76*z3*br$3t3c(a_fo=xiu^&&_f_q%dbu6ptgp^m+xqq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0','localhost','127.0.0.1']
+# ALLOWED_HOSTS = ['0.0.0.0','localhost','127.0.0.1']
+import environ
+env=environ.ENV(
+    DEBUG=(bool ,False)
+)
+environ.Env.read_env()
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env('DEBUG')
+ALLOWED_HOSTS = tuple(env.list('ALLOWED_HOSTS'))
+print(ALLOWED_HOSTS)
 
 
 # Application definition
@@ -77,13 +86,35 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'db', # This should match db in docker-compose
-        'PORT': 5432,
+        'ENGINE': env('DATABASE_ENGINE'),
+        'NAME':  env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': env('DATABASE_PORT'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': env('DATABASE_ENGINE'),
+#         'NAME':  env('DATABASE_NAME'),
+#         'USER': env('DATABASE_USER'),
+#         'PASSWORD': env('DATABASE_PASSWORD'),
+#         'HOST': env('DATABASE_HOST'),
+#         'PORT': env('DATABASE_PORT'),
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'HOST': 'db', # This should match db in docker-compose
+#         'PORT': 5432,
+#     }
+# }
 
 
 # Password validation
